@@ -61,9 +61,7 @@ class App extends Component {
 
   buyTokens = (etherAmount) => {
     this.setState({ loading: true })
-    this.state.ethSwap.methods.buyTokens().send({ value: etherAmount, from: this.state.account })
-    .on('transactionHash', (hash) => {
-      console.log(hash);
+    this.state.ethSwap.methods.buyTokens().send({ value: etherAmount, from: this.state.account }).on('transactionHash', (hash) => {
       this.setState({ loading: false })
     })
   }
@@ -75,7 +73,7 @@ class App extends Component {
         this.setState({ loading: false })
       })
     })
-  };
+  }
 
   constructor(props) {
     super(props)

@@ -1,71 +1,79 @@
-import React, { useState } from "react";
-import { TextField, Button } from "@material-ui/core";
-import { makeStyles } from "@material-ui/core/styles";
+import React, { Component } from 'react'
+// import tokenLogo from '../token-logo.png'
+// import ethLogo from '../eth-logo.png'
 
-const useStyles = makeStyles((theme) => ({
-  root: {
-    "& > *": {
-      margin: theme.spacing(1),
-      width: "25ch",
-    },
-  },
-}));
+class SellForm extends Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      output: '0'
+    }
+  }
 
-function SellForm({ ethBalance, tokenBalance, sellTokens }) {
-  const [state, setState] = useState({
-    input: "0",
-    output: "0",
-  });
-
-  const handleChange = (event) => {
-    const { name, value } = event.target;
-    setState({
-      [name]: value,
-      output: value / 100,
-    });
-  };
-
-  const handleSubmit = (event) => {
-    event.preventDefault();
-
-    let tokenAmount = window.web3.utils.toWei(state.input, "Ether");
-    sellTokens(tokenAmount);
-  };
-
-  const classes = useStyles();
-  
-  return (
-    <div style={{ alignItems: "center", justifyContent: "center" }}>
-        <h1>Sell Tokens</h1>
-      <form className={classes.root} onSubmit={handleSubmit}>
-        <TextField
-          onChange={handleChange}
-          value={state.input}
-          name="input"
-          style={{ border: "1px solid", borderRadius: "5px" }}
-          id="outlined-basic"
-          label="Input"
-        />
-        <span>Balance: {window.web3.utils.fromWei(tokenBalance, "Ether")}</span>
-        <br />
-        <TextField
-          onChange={handleChange}
-          value={state.output}
-          name="output"
-          style={{ border: "1px solid", borderRadius: "5px" }}
-          disabled
-          id="standard-disabled"
-          label="Output"
-        />
-        <span>Balance: {window.web3.utils.fromWei(ethBalance, "Ether")}</span>
-        <br />
-        <p>Exchange rate 100DApp=1ETH</p>
-        <Button type="submit" variant="contained" color="primary">
-          Sell DApp tokens
-        </Button>
+  render() {
+    return (
+      <form className="mb-3" onSubmit={(event) => {
+          event.preventDefault()
+          let etherAmount
+          etherAmount = this.input.value.toString()
+          etherAmount = window.web3.utils.toWei(etherAmount, 'Ether')
+          this.props.sellTokens(etherAmount)
+        }}>
+        <div>
+          <label className="float-left"><b>Input</b></label>
+          <span className="float-right text-muted">
+            Balance: {window.web3.utils.fromWei(this.props.tokenBalance, 'Ether')}
+          </span>
+        </div>
+        <div className="input-group mb-4">
+          <input
+            type="text"
+            onChange={(event) => {
+              const tokenAmount = this.input.value.toString()
+              this.setState({
+                output: tokenAmount / 100
+              })
+            }}
+            ref={(input) => { this.input = input }}
+            className="form-control form-control-lg"
+            placeholder="0"
+            required />
+          <div className="input-group-append">
+            {/* <div className="input-group-text">
+              <img src={tokenLogo} height='32' alt=""/>
+              &nbsp; DApp
+            </div> */}
+          </div>
+        </div>
+        <div>
+          <label className="float-left"><b>Output</b></label>
+          <span className="float-right text-muted">
+            Balance: {window.web3.utils.fromWei(this.props.ethBalance, 'Ether')}
+          </span>
+        </div>
+        <div className="input-group mb-2">
+          <input
+            type="text"
+            className="form-control form-control-lg"
+            placeholder="0"
+            value={this.state.output}
+            disabled
+          />
+          <div className="input-group-append">
+            {/* <div className="input-group-text">
+              <img src={ethLogo} height='32' alt=""/>
+              &nbsp;&nbsp;&nbsp; ETH
+            </div> */}
+          </div>
+        </div>
+        <div className="mb-5">
+          <span className="float-left text-muted">Exchange Rate</span>
+          <span className="float-right text-muted">100 DApp = 1 ETH</span>
+        </div>
+        <button type="submit" className="btn btn-primary btn-block btn-lg">SWAP!</button>
       </form>
-    </div>
-  );
-}   
+    );
+  }
+}
 
 export default SellForm;
